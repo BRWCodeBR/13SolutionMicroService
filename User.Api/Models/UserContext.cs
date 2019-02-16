@@ -17,7 +17,7 @@ namespace User.Api.Models
             .AddJsonFile(Directory.GetCurrentDirectory() + "/appsettings.json")
             .Build();
 
-            optionsBuilder.UseSqlServer(configuration.GetSection("AppSettings").GetSection("logConnection").Value);
+            optionsBuilder.UseSqlServer(configuration.GetSection("AppSettings").GetSection("connectionString").Value);
         }
 
         public virtual ICollection<UserFood> UserFood { get; set; }
