@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using User.Api.ViewModels;
 
 namespace User.Api.Controllers
 {
@@ -12,7 +13,7 @@ namespace User.Api.Controllers
     {
         [HttpPost]
         [Route("userretrieved")]
-        public IActionResult UserRetrieved()
+        public IActionResult UserRetrieved(RequestUser request)
         {
             try
             {
