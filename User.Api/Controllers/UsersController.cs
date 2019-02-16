@@ -35,11 +35,24 @@ namespace User.Api.Controllers
         } 
 
         [HttpPost]
-        public IActionResult Post(FaceServiceModel request)
+        public async Task<IActionResult> Post(FaceServiceModel request)
         {
             try
             {
                 var faceGuid = await FacialService.UpsertBase64(request.face);
+                var imageFace = db.UserFace.Where(x => x.faceId == faceGuid.Value.ToString()).FirstOrDefault();
+
+                if(imageFace != null) //JA TEM CADASTRADO
+                {
+
+                }
+                else //NÂO TEM CADASTRADO
+                {
+
+
+                }
+
+
                 return Ok();
             }
             catch (Exception ex)
