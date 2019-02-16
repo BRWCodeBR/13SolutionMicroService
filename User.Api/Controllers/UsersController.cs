@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using User.Api.Models;
+using User.Api.ViewModels;
 
 namespace User.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private UserContext db = new UserContext();
+
+
         [HttpPost]
         [Route("userretrieved")]
-        public IActionResult UserRetrieved()
+        public IActionResult UserRetrieved(RequestUser request)
         {
             try
             {
