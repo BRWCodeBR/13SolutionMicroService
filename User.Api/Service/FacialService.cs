@@ -1,5 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.ProjectOxford.Face;
+using Microsoft.ProjectOxford.Face.Contract;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -8,9 +13,15 @@ namespace User.Api.Service
 {
     public static class FacialService
     {
+        public static IConfiguration Configuration;
+        public static FaceServiceClient faceServiceClient;
+        public static Guid FaceListId;
+        private const string Exit = "exit";
+
         private static async Task<bool> UpsertFaceListAndCheckIfContainsFaceAsync()
         {
-            var faceListId = FaceListId.ToString();
+            faceServiceClient = new FaceServiceClient(Configuration["FaceAPIKey"], "https://eastus.api.cognitive.microsoft.com/face/v1.0");
+            var faceListId = Guid.Parse(Configuration["FaceListId"]).ToString();
             var faceLists = await faceServiceClient.ListFaceListsAsync();
             var faceList = faceLists.FirstOrDefault(_ => _.FaceListId == FaceListId.ToString());
 
@@ -27,6 +38,7 @@ namespace User.Api.Service
 
         private static async Task<Guid?> FindSimilarAsync(Guid faceId, Guid faceListId)
         {
+            faceServiceClient = new FaceServiceClient(Configuration["FaceAPIKey"], "https://eastus.api.cognitive.microsoft.com/face/v1.0");
             var similarFaces = await faceServiceClient.FindSimilarAsync(faceId, faceListId.ToString());
 
             var similarFace = similarFaces.FirstOrDefault(_ => _.Confidence > 0.5);
@@ -40,6 +52,7 @@ namespace User.Api.Service
             {
                 using (Stream imageFileStream = File.OpenRead(imageFilePath))
                 {
+                    faceServiceClient = new FaceServiceClient(Configuration["FaceAPIKey"], "https://eastus.api.cognitive.microsoft.com/face/v1.0");
                     var faces = await faceServiceClient.DetectAsync(imageFileStream);
                     return faces.FirstOrDefault();
                 }
@@ -57,6 +70,7 @@ namespace User.Api.Service
                 AddPersistedFaceResult faceResult;
                 using (Stream imageFileStream = File.OpenRead(imageFilePath))
                 {
+                    faceServiceClient = new FaceServiceClient(Configuration["FaceAPIKey"], "https://eastus.api.cognitive.microsoft.com/face/v1.0");
                     faceResult = await faceServiceClient.AddFaceToFaceListAsync(faceListId.ToString(), imageFileStream);
                     return faceResult.PersistedFaceId;
                 }
@@ -70,62 +84,70 @@ namespace User.Api.Service
 
         private static string SaveBase64String(string base64)
         {
-            var bytes = Convert.FromBase64String(resizeImage.Content);
-            using (var imageFile = new FileStream(filePath, FileMode.Create))
+            try
             {
-                imageFile.Write(bytes, 0, bytes.Length);
-                imageFile.Flush();
+                base64 = base64.Replace("data:image/jpeg;base64,", "");
+                var filePath = $"{Directory.GetCurrentDirectory()}\\Faces\\{new Guid().ToString()}.jpg";
+                var bytes = Convert.FromBase64String(base64);
+                using (var imageFile = new FileStream(filePath, FileMode.Create))
+                {
+                    imageFile.Write(bytes, 0, bytes.Length);
+                    imageFile.Flush();
+                }
+
+                return filePath;
+            }catch(Exception ex)
+            {
+                return "";
             }
         }
 
-        public static async string UpsertBase64(var base64)
+        public static async Task<Guid?> UpsertBase64(string base64)
         {
-            SaveBase64String(base64);
-
-            var facesFolder = HttpContext.Current.Server.MapPath("~/Faces");
-            
-            var sourceImage = "";
+            var sourceImage = SaveBase64String(base64);
 
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            FaceListId = Guid.Parse(Configuration["FaceListId"]);
-
-            faceServiceClient = new FaceServiceClient(Configuration["FaceAPIKey"], "https://eastus.api.cognitive.microsoft.com/face/v1.0");
+            var FaceListId = Guid.Parse(Configuration["FaceListId"]);            
 
             Console.WriteLine("Face Detection console. Please inform file name to check and hit enter. To exit, type exit");
 
             var command = "";
-                try
+            try
+            {
+                var containsAnyFaceOnList = await UpsertFaceListAndCheckIfContainsFaceAsync();
+
+                var face = await DetectFaceAsync(sourceImage);
+                if (face != null)
                 {
-                    var containsAnyFaceOnList = UpsertFaceListAndCheckIfContainsFaceAsync().Result;
+                    Guid? persistedId = null;
+                    if (containsAnyFaceOnList)
+                        persistedId = await FindSimilarAsync(face.FaceId, FaceListId);
 
-                    var face = DetectFaceAsync(sourceImage).Result;
-                    if (face != null)
+                    if (persistedId == null)
                     {
-                        Guid? persistedId = null;
-                        if (containsAnyFaceOnList)
-                            persistedId = FindSimilarAsync(face.FaceId, FaceListId).Result;
-
-                        if (persistedId == null)
-                        {
-                            persistedId = AddFaceAsync(FaceListId, sourceImage).Result;
-                            Console.WriteLine($"New User with FaceId {persistedId}");
-                        }
-                        else
-                            Console.WriteLine($"Face Exists with Face {persistedId}");
+                        persistedId = await AddFaceAsync(FaceListId, sourceImage);
+                        Console.WriteLine($"New User with FaceId {persistedId}");
                     }
                     else
-                    {
-                        Console.WriteLine("Not a face!");
-                    }
+                        Console.WriteLine($"Face Exists with Face {persistedId}");
+
+                    return persistedId;
                 }
-                catch (Exception)
+                else
                 {
-                    Console.WriteLine("Probably Rate Limit for API was reached, please try again later");
-                }         
+                    return null;
+                    Console.WriteLine("Not a face!");
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+                Console.WriteLine("Probably Rate Limit for API was reached, please try again later");
+            }
         }
     }
 }
