@@ -16,7 +16,8 @@ namespace Api.Facial.Sample
         private const string Exit = "exit";
         static void Main(string[] args)
         {
-            var templateImage = @"C:\Programacao\13SolutionMicroService\faces{0}.jpg";
+            var teste = ;
+            var templateImage = Path.GetFullPath(@"\faces") + "\faces{0}.jpg";
             var sourceImage = "";
 
             Configuration = new ConfigurationBuilder()
