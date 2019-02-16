@@ -16,7 +16,6 @@ namespace Api.Facial.Sample
         private const string Exit = "exit";
         static void Main(string[] args)
         {
-            var teste = ;
             var templateImage = Path.GetFullPath(@"\faces") + "\faces{0}.jpg";
             var sourceImage = "";
 
