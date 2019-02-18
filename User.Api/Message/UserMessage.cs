@@ -66,7 +66,7 @@ namespace User.Api.Message
         private async Task SendAsync(QueueClient queueClient)
         {
             int tries = 0;
-            Message message;
+            Microsoft.Azure.ServiceBus.Message message;
             while (true)
             {
                 if (_messages.Count <= 0)
