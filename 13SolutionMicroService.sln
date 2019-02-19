@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Facial.Sample", "Api.Facial.Sample\Api.Facial.Sample.csproj", "{F17D38E3-A236-4C3F-B03A-FF93965643D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Api", "User.Api\User.Api.csproj", "{663E4F24-2DA5-419F-8479-984AF8D88AA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User.Api", "User.Api\User.Api.csproj", "{663E4F24-2DA5-419F-8479-984AF8D88AA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeekBurger.Users.Contract", "GeekBurger.Users.Contract\GeekBurger.Users.Contract.csproj", "{214EFD17-C477-4DEA-BC3C-15AD6D8C6080}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{663E4F24-2DA5-419F-8479-984AF8D88AA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{663E4F24-2DA5-419F-8479-984AF8D88AA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{663E4F24-2DA5-419F-8479-984AF8D88AA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{214EFD17-C477-4DEA-BC3C-15AD6D8C6080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{214EFD17-C477-4DEA-BC3C-15AD6D8C6080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{214EFD17-C477-4DEA-BC3C-15AD6D8C6080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{214EFD17-C477-4DEA-BC3C-15AD6D8C6080}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

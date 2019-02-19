@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageId>User.Api</PackageId>
+    <Authors>User.Api</Authors>
+    <Company>User.Api</Company>
+    <Product>User.Api</Product>
+    <Description></Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +20,10 @@
     <PackageReference Include="Microsoft.Azure.ServiceBus" Version="3.3.0" />
     <PackageReference Include="Microsoft.ProjectOxford.Face.DotNetCore" Version="1.1.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GeekBurger.Users.Contract\GeekBurger.Users.Contract.csproj" />
   </ItemGroup>
 
 </Project>
