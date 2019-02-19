@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using User.Api.Message;
+using User.Api.Models;
 
 namespace User.Api.Service
 {
@@ -132,26 +133,11 @@ namespace User.Api.Service
 
                     if (persistedId == null)
                     {
-                        persistedId = await AddFaceAsync(FaceListId, sourceImage);
-                        Console.WriteLine($"New User with FaceId {persistedId}");
-
-                        var msg = new Microsoft.Azure.ServiceBus.Message()
-                        {
-                            MessageId = Guid.NewGuid().ToString(),
-                            Body = Encoding.ASCII.GetBytes("Novo Cadastro: " + persistedId)
-                        };
-
-                        _iUMsg.SendMessagesAsync(msg);
+                        MessageService.SendNewIdMessage(persistedId.ToString());
                     }
                     else
                     {
-                        var msg = new Microsoft.Azure.ServiceBus.Message()
-                        {
-                            MessageId = Guid.NewGuid().ToString(),
-                            Body = Encoding.ASCII.GetBytes("Cadastro Persistido: " + persistedId)
-                        };
-
-                        _iUMsg.SendMessagesAsync(msg);
+                        MessageService.SendPersistedIdMessage(persistedId.ToString());
                     }
                     
                     return persistedId;

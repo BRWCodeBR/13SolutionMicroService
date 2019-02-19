@@ -17,50 +17,48 @@ namespace User.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private UserContext db = new UserContext();
+        //private UserContext db = new UserContext();        
 
-
+        /// <summary>
+        /// UserRetrieved
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("/")]
         public IActionResult UserRetrieved(RequestUser request)
         {
             try
             {
-
-
                 return Ok();
             }
             catch (Exception ex)
             {
                 return NotFound(ex.Message); 
             }
-        } 
+        }
 
+        /// <summary>
+        /// Post
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Post(FaceServiceModel request)
         {
             try
             {
                 var faceGuid = await FacialService.UpsertBase64(request.face);
-                //var imageFace = db.UserFace.Where(x => x.faceId == faceGuid.Value.ToString()).FirstOrDefault();
-                UserFace imageFace = null;
+                var imageFace = UserStaticContext.UserFace.Where(x => x.faceId == faceGuid.Value.ToString()).FirstOrDefault();                
 
                 if(imageFace != null) //JA TEM CADASTRADO
                 {
-                    var _iUMsg = new UserMessage(FacialService.Configuration);
-                    var msg = new Microsoft.Azure.ServiceBus.Message()
-                    {
-                        MessageId = Guid.NewGuid().ToString(),
-                        Body = Encoding.ASCII.GetBytes("Cadastro Persistido: " + imageFace.faceId)
-                    };
-
-                    _iUMsg.SendMessagesAsync(msg);
+                    MessageService.SendPersistedIdMessage(imageFace.faceId);
                 }
                 else //NÂO TEM CADASTRADO
                 {
                     var createdFaceId = FacialService.UpsertBase64(request.face);                    
                 }
-
 
                 return Ok();
             }
