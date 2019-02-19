@@ -105,7 +105,7 @@ namespace User.Api.Service
             }
         }
 
-        public static async Task<Guid?> UpsertBase64(string base64)
+        public static async Task<Guid?> UpsertBase64(string base64, string processingTempGuid)
         {
             var sourceImage = SaveBase64String(base64);
 
@@ -114,11 +114,8 @@ namespace User.Api.Service
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var FaceListId = Guid.Parse(Configuration["FaceListId"]);            
+            var FaceListId = Guid.Parse(Configuration["FaceListId"]);                        
 
-            Console.WriteLine("Face Detection console. Please inform file name to check and hit enter. To exit, type exit");
-
-            var command = "";
             try
             {
                 var containsAnyFaceOnList = await UpsertFaceListAndCheckIfContainsFaceAsync();
@@ -133,11 +130,17 @@ namespace User.Api.Service
 
                     if (persistedId == null)
                     {
+                        //Adicionando manualmente um novo registro no banco static
+                        UserStaticContext.UserFace.Add(new UserFace()
+                        {
+                            faceId = persistedId.ToString(),
+                            codUserFace = processingTempGuid
+                        });
                         MessageService.SendNewIdMessage(persistedId.ToString());
                     }
                     else
                     {
-                        MessageService.SendPersistedIdMessage(persistedId.ToString());
+                        MessageService.SendPersistedIdMessage(persistedId.ToString());                        
                     }
                     
                     return persistedId;

@@ -57,9 +57,11 @@ namespace User.Api.Controllers
                 }
                 else //NÂO TEM CADASTRADO
                 {
+                    var processingTempGuid = Guid.NewGuid();
                     var createdFaceId = FacialService.UpsertBase64(request.face);                    
                 }
 
+                MessageService.SendProcessingMessage();
                 return Ok();
             }
             catch (Exception ex)
