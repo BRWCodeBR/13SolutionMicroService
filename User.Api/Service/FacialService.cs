@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using User.Api.Message;
+using User.Api.Models;
 
 namespace User.Api.Service
 {
@@ -104,7 +105,7 @@ namespace User.Api.Service
             }
         }
 
-        public static async Task<Guid?> UpsertBase64(string base64)
+        public static async Task<Guid?> UpsertBase64(string base64, string processingTempGuid)
         {
             var sourceImage = SaveBase64String(base64);
 
@@ -113,11 +114,8 @@ namespace User.Api.Service
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var FaceListId = Guid.Parse(Configuration["FaceListId"]);            
+            var FaceListId = Guid.Parse(Configuration["FaceListId"]);                        
 
-            Console.WriteLine("Face Detection console. Please inform file name to check and hit enter. To exit, type exit");
-
-            var command = "";
             try
             {
                 var containsAnyFaceOnList = await UpsertFaceListAndCheckIfContainsFaceAsync();
@@ -132,26 +130,17 @@ namespace User.Api.Service
 
                     if (persistedId == null)
                     {
-                        persistedId = await AddFaceAsync(FaceListId, sourceImage);
-                        Console.WriteLine($"New User with FaceId {persistedId}");
-
-                        var msg = new Microsoft.Azure.ServiceBus.Message()
+                        //Adicionando manualmente um novo registro no banco static
+                        UserStaticContext.UserFace.Add(new UserFace()
                         {
-                            MessageId = Guid.NewGuid().ToString(),
-                            Body = Encoding.ASCII.GetBytes("Novo Cadastro: " + persistedId)
-                        };
-
-                        _iUMsg.SendMessagesAsync(msg);
+                            faceId = persistedId.ToString(),
+                            codUserFace = processingTempGuid
+                        });
+                        MessageService.SendNewIdMessage(persistedId.ToString());
                     }
                     else
                     {
-                        var msg = new Microsoft.Azure.ServiceBus.Message()
-                        {
-                            MessageId = Guid.NewGuid().ToString(),
-                            Body = Encoding.ASCII.GetBytes("Cadastro Persistido: " + persistedId)
-                        };
-
-                        _iUMsg.SendMessagesAsync(msg);
+                        MessageService.SendPersistedIdMessage(persistedId.ToString());                        
                     }
                     
                     return persistedId;
