@@ -6,8 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using User.Api.Message;
 
 namespace User.Api.Service
 {
@@ -119,6 +121,7 @@ namespace User.Api.Service
             try
             {
                 var containsAnyFaceOnList = await UpsertFaceListAndCheckIfContainsFaceAsync();
+                var _iUMsg = new UserMessage(FacialService.Configuration);
 
                 var face = await DetectFaceAsync(sourceImage);
                 if (face != null)
@@ -131,10 +134,26 @@ namespace User.Api.Service
                     {
                         persistedId = await AddFaceAsync(FaceListId, sourceImage);
                         Console.WriteLine($"New User with FaceId {persistedId}");
+
+                        var msg = new Microsoft.Azure.ServiceBus.Message()
+                        {
+                            MessageId = Guid.NewGuid().ToString(),
+                            Body = Encoding.ASCII.GetBytes("Novo Cadastro: " + persistedId)
+                        };
+
+                        _iUMsg.SendMessagesAsync(msg);
                     }
                     else
-                        Console.WriteLine($"Face Exists with Face {persistedId}");
+                    {
+                        var msg = new Microsoft.Azure.ServiceBus.Message()
+                        {
+                            MessageId = Guid.NewGuid().ToString(),
+                            Body = Encoding.ASCII.GetBytes("Cadastro Persistido: " + persistedId)
+                        };
 
+                        _iUMsg.SendMessagesAsync(msg);
+                    }
+                    
                     return persistedId;
                 }
                 else

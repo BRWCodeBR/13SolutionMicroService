@@ -26,7 +26,7 @@ namespace User.Api.Message
         /// <param name="message"></param>
         public async void SendMessagesAsync(Microsoft.Azure.ServiceBus.Message message)
         {
-            var connectionString = _configuration.GetSection("AppSettings").GetSection("connectionString").Value;
+            var connectionString = _configuration["serviceBus:connectionString"];
             var queueClient = new QueueClient(connectionString, "UserChanged");
             int tries = 0;
             
@@ -48,7 +48,7 @@ namespace User.Api.Message
             if (_lastTask != null && !_lastTask.IsCompleted)
                 return;
 
-            var connectionString = _configuration["connectionStrings:serviceBusConnectionString"];
+            var connectionString = _configuration["connectionStrings:connectionString"];
 
             var queueClient = new QueueClient(connectionString, "UserChanged");
 
