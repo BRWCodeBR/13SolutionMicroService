@@ -105,7 +105,7 @@ namespace User.Api.Service
             }
         }
 
-        public static async Task<Guid?> UpsertBase64(string base64, string processingTempGuid)
+        public static async Task<Guid?> UpsertBase64(string base64)
         {
             var sourceImage = SaveBase64String(base64);
 
