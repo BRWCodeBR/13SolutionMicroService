@@ -6,4 +6,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NuGet.CommandLine" Version="4.9.3" />
+  </ItemGroup>
+
 </Project>
