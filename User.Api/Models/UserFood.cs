@@ -18,7 +18,7 @@ namespace User.Api.Models
 
         public virtual ICollection<UserFace> userFace { get; set; }
 
-        public virtual ICollection<UserFood> userFood { get; set; }
+        public virtual ICollection<UserFoodRestriction> userFoodRestriction { get; set; }
 
     }
 }

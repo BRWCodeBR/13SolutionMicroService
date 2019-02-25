@@ -17,26 +17,7 @@ namespace User.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        //private UserContext db = new UserContext();        
-
-        /// <summary>
-        /// UserRetrieved
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("/")]
-        public IActionResult UserRetrieved(RequestUser request)
-        {
-            try
-            {
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return NotFound(ex.Message); 
-            }
-        }
+        private UserContext db = new UserContext();        
 
         /// <summary>
         /// Post
@@ -44,37 +25,35 @@ namespace User.Api.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost]
+        [Route("/")]
         public async Task<IActionResult> Post(FaceServiceModel request)
         {
             try
             {
-                var codUserGuid = "";
-                var faceGuid = await FacialService.UpsertBase64(request.face, codUserGuid);
+                var faceGuid = await FacialService.UpsertBase64(request.face);
                 var imageFace = UserStaticContext.UserFace.Where(x => x.faceId == faceGuid.Value.ToString()).FirstOrDefault();                
 
                 if(imageFace != null) //JA TEM CADASTRADO
                 {
-                    MessageService.SendPersistedIdMessage(imageFace.faceId);
+                    UserFood user = db.UserFood.Where(x => x.codUserFood == imageFace.codUserFoodFK).FirstOrDefault();
+                    if(user != null)
+                    {
+                        var restricoes = user.userFoodRestriction;
+                        MessageService.SendPersistedIdMessage(imageFace.faceId);
+                    }
                 }
                 else //NÂO TEM CADASTRADO
                 {
-                    codUserGuid = Guid.NewGuid().ToString();
-                    var createdFaceId = FacialService.UpsertBase64(request.face, codUserGuid);                    
+                    
                 }
 
-                MessageService.SendProcessingMessage(codUserGuid);
+                MessageService.SendProcessingMessage(Guid.NewGuid().ToString());
                 return Ok();
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }        
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> FoodRestrictions()
-        {
-            return Ok();
-        }
+    }
     }
 }
