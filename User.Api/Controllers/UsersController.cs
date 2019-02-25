@@ -30,9 +30,15 @@ namespace User.Api.Controllers
         {
             try
             {
+                //PROCESSANDO
+                MessageService.SendProcessingMessage(Guid.NewGuid().ToString());
+                //ANALISA IMAGEM
                 var faceGuid = await FacialService.UpsertBase64(request.face);
+
+                //PEGA USUARIO
                 var imageFace = UserStaticContext.UserFace.Where(x => x.faceId == faceGuid.Value.ToString()).FirstOrDefault();                
 
+                //PUBLICAR RESTRICOES
                 if(imageFace != null) //JA TEM CADASTRADO
                 {
                     UserFood user = db.UserFood.Where(x => x.codUserFood == imageFace.codUserFoodFK).FirstOrDefault();
@@ -47,7 +53,7 @@ namespace User.Api.Controllers
                     
                 }
 
-                MessageService.SendProcessingMessage(Guid.NewGuid().ToString());
+                
                 return Ok();
             }
             catch (Exception ex)
