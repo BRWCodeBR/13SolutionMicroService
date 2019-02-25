@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using User.Api.Helpers;
 using User.Api.Message;
 using User.Api.Models;
 
@@ -31,14 +33,12 @@ namespace User.Api.Service
             _iUMsg.SendMessagesAsync(msg);
         }
 
-        public static async void SendPersistedIdMessage(string faceId)
+        public static async void SendPersistedIdMessage(UserFood user)
         {
-            var persistedUser = UserStaticContext.UserFace.First(x => x.faceId == faceId);
-
             var msg = new Microsoft.Azure.ServiceBus.Message()
             {
                 MessageId = Guid.NewGuid().ToString(),
-                Body = Encoding.ASCII.GetBytes("Cadastro Persistido: " + persistedUser.codUserFace)
+                Body = Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(user.ToServiceModel()))
             };
 
             _iUMsg.SendMessagesAsync(msg);

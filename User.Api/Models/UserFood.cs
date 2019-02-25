@@ -11,7 +11,7 @@ namespace User.Api.Models
     public class UserFood
     {
         [Key]
-        public string codUserFood { get; set; }
+        public int codUserFood { get; set; }
 
         public string nameUser { get; set; }
 
@@ -20,5 +20,6 @@ namespace User.Api.Models
 
         public virtual ICollection<UserFoodRestriction> userFoodRestriction { get; set; }
 
+        public string others { get; set; }
     }
 }

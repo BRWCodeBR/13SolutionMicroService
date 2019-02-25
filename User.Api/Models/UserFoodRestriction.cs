@@ -16,7 +16,7 @@ namespace User.Api.Models
 
         public string foodRestriction { get; set; }
 
-        public string codUserFoodFK { get; set; }
+        public int codUserFoodFK { get; set; }
 
         [ForeignKey("codUserFoodFK")]
         public virtual UserFood userFood { get; set; }

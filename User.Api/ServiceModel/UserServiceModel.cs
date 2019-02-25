@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace User.Api.ServiceModel
 {
-    public class FoodRestrictionServiceModel
+    public class UserServiceModel
     {
         public IEnumerable<string> Restrictions { get; set; }
         public string Others { get; set; }
