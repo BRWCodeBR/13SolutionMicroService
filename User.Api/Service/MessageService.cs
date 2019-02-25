@@ -33,7 +33,7 @@ namespace User.Api.Service
 
         public static async void SendPersistedIdMessage(string faceId)
         {
-            var persistedUser = UserStaticContext.UserFace.First(x => x.faceId == faceGuid);
+            var persistedUser = UserStaticContext.UserFace.First(x => x.faceId == faceId);
 
             var msg = new Microsoft.Azure.ServiceBus.Message()
             {
