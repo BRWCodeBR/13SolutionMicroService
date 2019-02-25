@@ -11,7 +11,7 @@ namespace User.Api.Models
     public class UserFace
     {
         [Key]
-        public string codUserFace { get; set; }
+        public int codUserFace { get; set; }
 
         public string faceId { get; set; }
 

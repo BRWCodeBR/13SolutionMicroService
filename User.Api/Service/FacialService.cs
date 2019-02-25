@@ -133,8 +133,7 @@ namespace User.Api.Service
                         //Adicionando manualmente um novo registro no banco static
                         UserStaticContext.UserFace.Add(new UserFace()
                         {
-                            faceId = persistedId.ToString(),
-                            codUserFace = processingTempGuid
+                            faceId = persistedId.ToString()
                         });
                         MessageService.SendNewIdMessage(persistedId.ToString());
                     }

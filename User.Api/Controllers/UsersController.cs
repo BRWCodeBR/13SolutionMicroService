@@ -48,7 +48,8 @@ namespace User.Api.Controllers
         {
             try
             {
-                var faceGuid = await FacialService.UpsertBase64(request.face);
+                var codUserGuid = "";
+                var faceGuid = await FacialService.UpsertBase64(request.face, codUserGuid);
                 var imageFace = UserStaticContext.UserFace.Where(x => x.faceId == faceGuid.Value.ToString()).FirstOrDefault();                
 
                 if(imageFace != null) //JA TEM CADASTRADO
@@ -57,17 +58,23 @@ namespace User.Api.Controllers
                 }
                 else //NÂO TEM CADASTRADO
                 {
-                    var processingTempGuid = Guid.NewGuid();
-                    var createdFaceId = FacialService.UpsertBase64(request.face);                    
+                    codUserGuid = Guid.NewGuid().ToString();
+                    var createdFaceId = FacialService.UpsertBase64(request.face, codUserGuid);                    
                 }
 
-                MessageService.SendProcessingMessage();
+                MessageService.SendProcessingMessage(codUserGuid);
                 return Ok();
             }
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }        
-    }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FoodRestrictions()
+        {
+            return Ok();
+        }
     }
 }
