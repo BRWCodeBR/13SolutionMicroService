@@ -20,14 +20,12 @@ namespace User.Api.Service
         //}
 
         private static UserMessage _iUMsg = new UserMessage(FacialService.Configuration);
-        public static async void SendNewIdMessage(string faceGuid)
+        public static async void SendNewIdMessage(UserFood user)
         {
-            var persistedUser = UserStaticContext.UserFace.First(x => x.faceId == faceGuid);
-
             var msg = new Microsoft.Azure.ServiceBus.Message()
             {
                 MessageId = Guid.NewGuid().ToString(),
-                Body = Encoding.ASCII.GetBytes("{\"AreaRestrictionsSet\": false, \"UserId\":" + persistedUser.codUserFace + "}")
+                Body = Encoding.ASCII.GetBytes("{\"AreaRestrictionsSet\": false, \"UserId\":" + user.codUserFood + "}")
             };
 
             _iUMsg.SendMessagesAsync(msg);

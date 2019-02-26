@@ -55,14 +55,21 @@ namespace User.Api.Controllers
                     if(user != null)
                     {
                         var restricoes = user.userFoodRestriction;
-                        MessageService.SendPersistedIdMessage(imageFace.faceId);
+                        MessageService.SendPersistedIdMessage(user);
                     }
                 }
                 else //NÂO TEM CADASTRADO
                 {
-                    
-                }
+                    var newUser = new UserFood()
+                    {
+                        nameUser = "Nome"
+                    };
 
+                    db.UserFood.Add(newUser);
+                    db.SaveChanges();
+
+                    MessageService.SendNewIdMessage(newUser);
+                }
                 
                 return Ok();
             }
@@ -71,5 +78,20 @@ namespace User.Api.Controllers
                 return StatusCode(500, ex.Message);
             }        
     }
+
+        [HttpPost]
+        [Route("/foodrestriction")]
+        public async Task<IActionResult> FoodRestriction(UserServiceModel request)
+        {
+            try
+            {
+                UserService.UpsertFoodRestrictions(request);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
