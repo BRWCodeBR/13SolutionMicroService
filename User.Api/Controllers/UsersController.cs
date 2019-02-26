@@ -67,6 +67,15 @@ namespace User.Api.Controllers
                     db.UserFood.Add(newUser);
                     db.SaveChanges();
 
+                    var userFace = new UserFace()
+                    {
+                        codUserFoodFK = newUser.codUserFood,
+                        faceId = faceGuid.ToString()
+                    };
+
+                    db.UserFace.Add(userFace);
+                    db.SaveChanges();
+
                     MessageService.SendNewIdMessage(newUser);
                 }
                 

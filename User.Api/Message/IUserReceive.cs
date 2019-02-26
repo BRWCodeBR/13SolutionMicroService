@@ -8,6 +8,6 @@ namespace User.Api.Message
 {
     public interface IUserReceive           
     {
-        void UserReceive(IConfiguration configuration);
+        //void UserReceive(IConfiguration configuration);
     }
 }

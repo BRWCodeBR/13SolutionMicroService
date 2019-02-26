@@ -134,26 +134,21 @@ namespace User.Api.Service
                         UserStaticContext.UserFace.Add(new UserFace()
                         {
                             faceId = persistedId.ToString()
-                        });
-                        MessageService.SendNewIdMessage(persistedId.ToString());
-                    }
-                    else
-                    {
-                        MessageService.SendPersistedIdMessage(persistedId.ToString());                        
-                    }
+                        });                        
+                    }                    
                     
                     return persistedId;
                 }
                 else
                 {
-                    return null;
                     Console.WriteLine("Not a face!");
+                    return null;                    
                 }
             }
             catch (Exception ex)
             {
-                return null;
                 Console.WriteLine("Probably Rate Limit for API was reached, please try again later");
+                return null;                
             }
         }
     }

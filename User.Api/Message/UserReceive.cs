@@ -25,7 +25,6 @@ namespace User.Api.Message
             _configuration = configuration;
             ReceiveMessages();
         }
-
         private static async void ReceiveMessages()
         {
             var subscriptionClient = new SubscriptionClient( new ServiceBusConnectionStringBuilder(_configuration["serviceBus:connectionString"].ToString()), "UserChanged");
@@ -66,5 +65,7 @@ namespace User.Api.Message
             Console.WriteLine($"- Endpoint: {context.Endpoint}, Path: {context.EntityPath}, Action: {context.Action}");
             return Task.CompletedTask;
         }
+
+
     }
 }
