@@ -29,6 +29,8 @@ namespace User.Api
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+
+
             // Configurando o serviço de documentação do Swagger
             services.AddSwaggerGen(c =>
             {
@@ -63,6 +65,7 @@ namespace User.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
 
             
 

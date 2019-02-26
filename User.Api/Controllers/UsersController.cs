@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using User.Api.Message;
 using User.Api.Models;
 using User.Api.Service;
@@ -17,7 +18,15 @@ namespace User.Api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private UserContext db = new UserContext();        
+        private UserContext db = new UserContext();
+        private IConfiguration config;
+        private IUserReceive receive;
+
+        public UsersController(IConfiguration _config)
+        {
+            config = _config;
+            receive = new UserReceive(config);
+        }
 
         /// <summary>
         /// Post
