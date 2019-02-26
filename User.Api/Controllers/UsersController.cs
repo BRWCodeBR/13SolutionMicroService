@@ -25,6 +25,7 @@ namespace User.Api.Controllers
         public UsersController(IConfiguration _config)
         {
             config = _config;
+            //RECEBE AS MENSAGENS ENVIAS POR NÒS COMO TESTE
             receive = new UserReceive(config);
         }
 
