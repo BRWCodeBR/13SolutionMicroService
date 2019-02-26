@@ -10,7 +10,9 @@ using User.Api.Service;
 
 namespace User.Api.Message
 {
-
+    /// <summary>
+    /// 
+    /// </summary>
     public class UserMessage : IUserMessage
     {
         IConfiguration _configuration;
@@ -51,7 +53,6 @@ namespace User.Api.Message
             var connectionString = _configuration["serviceBus:connectionString"];
             var topicClient = new TopicClient(_configuration["serviceBus:connectionString"], "UserChanged");
 
-            //var queueClient = new QueueClient(connectionString, "UserChanged");
             int tries = 0;
             while (true)
             {
