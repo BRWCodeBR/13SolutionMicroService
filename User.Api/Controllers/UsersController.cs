@@ -20,12 +20,12 @@ namespace User.Api.Controllers
     {
         private UserContext db = new UserContext();
         private IConfiguration config;
-        private IUserReceive receive;
 
         public UsersController(IConfiguration _config)
         {
             config = _config;
-            receive = new UserReceive(config);
+            //RECEBE AS MENSAGENS ENVIAS POR NÒS COMO TESTE
+            new UserReceive().ReceiveMessages();
         }
 
         /// <summary>

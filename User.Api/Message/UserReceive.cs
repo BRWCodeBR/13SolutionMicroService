@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -20,12 +21,16 @@ namespace User.Api.Message
         private static int count;
         private static IConfiguration _configuration;
 
-        public UserReceive(IConfiguration configuration)
+        public UserReceive()
         {
-            _configuration = configuration;
-            ReceiveMessages();
+            _configuration = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile(Directory.GetCurrentDirectory() + "/appsettings.json")
+            .Build(); ;
         }
-        private static async void ReceiveMessages()
+        
+
+        public async void ReceiveMessages()
         {
             var subscriptionClient = new SubscriptionClient( new ServiceBusConnectionStringBuilder(_configuration["serviceBus:connectionString"].ToString()), "UserChanged");
 
