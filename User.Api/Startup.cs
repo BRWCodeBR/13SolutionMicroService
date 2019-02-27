@@ -37,13 +37,13 @@ namespace User.Api
                 c.SwaggerDoc("v1",
                     new Info
                     {
-                        Title = "Conversor de Temperaturas",
+                        Title = "Geek Burger - User API",
                         Version = "v1",
-                        Description = "Exemplo de API REST criada com o ASP.NET Core",
+                        Description = "API Rest para controle de usuários e reconhecimento facial da aplicação Geek Burger.",
                         Contact = new Contact
                         {
-                            Name = "Renato Groffe",
-                            Url = "https://github.com/renatogroffe"
+                            Name = "13NetTeam Solutions",
+                            Url = "https://github.com/BRWCodeBR/13SolutionMicroService"
                         }
                     });
 
@@ -74,7 +74,7 @@ namespace User.Api
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json",
-                    "Conversor de Temperaturas");
+                    "Geek Burger - User API");
             });
 
             app.UseMvc();
