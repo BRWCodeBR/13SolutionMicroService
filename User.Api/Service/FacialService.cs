@@ -14,29 +14,42 @@ using User.Api.Models;
 
 namespace User.Api.Service
 {
-    public static class FacialService
+    public class FacialService
     {
         public static IConfiguration Configuration;
         public static FaceServiceClient faceServiceClient;
         public static Guid FaceListId;
         private const string Exit = "exit";
 
+        public FacialService(IConfiguration _config)
+        {
+            Configuration = _config;
+        }
+        
         private static async Task<bool> UpsertFaceListAndCheckIfContainsFaceAsync()
         {
-            faceServiceClient = new FaceServiceClient(Configuration["FaceAPIKey"], "https://eastus.api.cognitive.microsoft.com/face/v1.0");
-            var faceListId = Guid.Parse(Configuration["FaceListId"]).ToString();
-            var faceLists = await faceServiceClient.ListFaceListsAsync();
-            var faceList = faceLists.FirstOrDefault(_ => _.FaceListId == FaceListId.ToString());
-
-            if (faceList == null)
+            try
             {
-                await faceServiceClient.CreateFaceListAsync(faceListId, "GeekBurgerFaces", null);
-                return false;
+                faceServiceClient = new FaceServiceClient(Configuration["FaceAPIKey"], "https://eastus.api.cognitive.microsoft.com/face/v1.0");
+                var faceListId = Guid.Parse(Configuration["FaceListId"]).ToString();
+                var faceLists = await faceServiceClient.ListFaceListsAsync();
+                var faceList = faceLists.FirstOrDefault(_ => _.FaceListId == FaceListId.ToString());
+
+                if (faceList == null)
+                {
+                    await faceServiceClient.CreateFaceListAsync(faceListId, "GeekBurgerFaces", null);
+                    return false;
+                }
+
+                var faceListJustCreated = await faceServiceClient.GetFaceListAsync(faceListId);
+
+                return faceListJustCreated.PersistedFaces.Any();
             }
-
-            var faceListJustCreated = await faceServiceClient.GetFaceListAsync(faceListId);
-
-            return faceListJustCreated.PersistedFaces.Any();
+            catch (Exception ex)
+            {
+                throw ex;  
+            }
+            
         }
 
         private static async Task<Guid?> FindSimilarAsync(Guid faceId, Guid faceListId)
@@ -90,7 +103,7 @@ namespace User.Api.Service
             try
             {
                 base64 = base64.Replace("data:image/jpeg;base64,", "");
-                var filePath = $"{Directory.GetCurrentDirectory()}\\Faces\\{new Guid().ToString()}.jpg";
+                var filePath = $"{Directory.GetCurrentDirectory()}\\Faces\\{ Guid.NewGuid().ToString()}.jpg";
                 var bytes = Convert.FromBase64String(base64);
                 using (var imageFile = new FileStream(filePath, FileMode.Create))
                 {
@@ -114,7 +127,7 @@ namespace User.Api.Service
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            var FaceListId = Guid.Parse(Configuration["FaceListId"]);                        
+            //var FaceListId = Guid.Parse(Configuration["FaceListId"]);                        
 
             try
             {

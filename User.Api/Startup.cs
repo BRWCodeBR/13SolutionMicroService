@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.PlatformAbstractions;
 using Swashbuckle.AspNetCore.Swagger;
+using User.Api.Polly;
 
 namespace User.Api
 {
@@ -30,7 +31,7 @@ namespace User.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 
-
+            services.AddPollyPolicies();
             // Configurando o serviço de documentação do Swagger
             services.AddSwaggerGen(c =>
             {
